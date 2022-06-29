@@ -10,12 +10,6 @@ export function* postChangesSaga(action: { type: string, index: number, content:
     const apiService = WebSocketService.getInstance();
 
     if (apiService.isConnected) {
-        console.log("apiService", {
-            type: "INSERT",
-            index,
-            content,
-            changes
-        })
         apiService.send(JSON.stringify({
             type: "INSERT",
             index,
@@ -23,7 +17,7 @@ export function* postChangesSaga(action: { type: string, index: number, content:
             changes
         }));
     } else {
-        console.log("********* Websocket not connected!!!***********");
+        console.error("********* Disconnected !!! ***********");
     }
 }
 
@@ -34,16 +28,12 @@ export function* removeChangesSaga(action: { type: string, start: number, length
     const apiService = WebSocketService.getInstance();
 
     if (apiService.isConnected) {
-        console.log("apiService", {
-            type: "REMOVE",
-            start, length, content
-        })
         apiService.send(JSON.stringify({
             type: "REMOVE",
             start, length, content
         }));
     } else {
-        console.log("********* Websocket not connected!!!***********");
+        console.error("********* Disconnected !!! ***********");
     }
 }
 

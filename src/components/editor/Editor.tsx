@@ -1,10 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import {
-    insertContentAction,
-    removeContentAction,
-    undoContentAction,
-    updateContentAction
-} from "../../redux/actions/content.action";
+import { insertContentAction, removeContentAction, undoContentAction } from "../../redux/actions/content.action";
 import { useDispatch, useSelector } from "react-redux";
 import { getContent } from "../../redux/selectors/content.selector";
 import { WebSocketService } from "../../service/network/webSocketService";
@@ -24,12 +19,11 @@ export default function Editor() {
 
         apiService.onmessage = function (event: MessageEvent) {
             try {
-                console.log(event.data);
                 const incomingChanges = JSON.parse(event.data);
                 const cursorPosition = getCurrentCursorPosition();
 
                 if (incomingChanges.type === "INSERT") {
-                    dispatch(updateContentAction(incomingChanges.content));
+                    dispatch(insertContentAction(incomingChanges.changes, incomingChanges.index));
                     console.log(cursorPosition, incomingChanges.index, incomingChanges.changes.length);
                     if (cursorPosition <= incomingChanges.index) {
                         udpateCursorPosition(cursorPosition);
@@ -37,14 +31,14 @@ export default function Editor() {
                         udpateCursorPosition(cursorPosition + incomingChanges.changes.length);
                     }
                 } else if (incomingChanges.type === "REMOVE") {
-                    dispatch(updateContentAction(incomingChanges.content));
+                    dispatch(removeContentAction(incomingChanges.start, incomingChanges.length));
                     if (cursorPosition <= incomingChanges.start) {
                         udpateCursorPosition(cursorPosition);
                     } else {
                         udpateCursorPosition(cursorPosition - incomingChanges.length);
                     }
                 } else {
-                    console.error("Invalid type");
+                    console.error("Invalid incoming message", incomingChanges);
                 }
 
             } catch (err) {
@@ -59,18 +53,16 @@ export default function Editor() {
 
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = event.target.value;
-        // console.log(event, value);
 
         if (!value && content) {
             removeText(0, content.length);
         }
 
-        const {selectionStart, selectionEnd} = event.target;
+        const {selectionStart} = event.target;
 
         // @ts-ignore
         switch (event.nativeEvent.inputType) {
             case "insertFromPaste":
-                console.log(selectionStart, selectionEnd);
                 break;
             case "insertLineBreak":
                 insertText(selectionStart - 1, "\n");
@@ -94,8 +86,6 @@ export default function Editor() {
         // @ts-ignore
         const {selectionStart: start, selectionEnd: end} = event.target;
 
-        console.log(event, start, end);
-
         if (event.key === "z" && event.metaKey) {
             dispatch(undoContentAction())
         }
@@ -113,17 +103,13 @@ export default function Editor() {
 
     const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
         // @ts-ignore
-        // console.log("handlePaste", event.target.selectionStart, event.clipboardData.getData("text"))
-        // @ts-ignore
         insertText(event.target.selectionStart, event.clipboardData.getData("text"));
     }
 
     const insertText = (index: number, text: string) => {
-        // console.warn("Inserting text at", index, text);
-
         const prevCursorPosition = getCurrentCursorPosition();
         if (prevCursorPosition !== index) {
-            console.error("Prev position was ", prevCursorPosition, "but trying to insert at ", index);
+            console.error("cursor moved ", prevCursorPosition, index);
             return;
         }
 
@@ -132,14 +118,11 @@ export default function Editor() {
     }
 
     const removeText = (start: number, length: number) => {
-        // console.warn("Removing text at", start, length);
-
         dispatch(removeContentAction(start, length, true));
         udpateCursorPosition(start);
     }
 
     const setCursorPosition = (cursorPosition: number) => {
-        console.log("Setting cursor position", cursorPosition);
         textareaRef.current?.setSelectionRange(cursorPosition, cursorPosition);
     }
 
@@ -148,7 +131,6 @@ export default function Editor() {
 
     const udpateCursorPosition = (cursorPosition: number) => {
         setTimeout(() => {
-            console.log("re-setting cursor");
             setCursorPosition(cursorPosition);
         }, 1);
 
