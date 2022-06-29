@@ -1,4 +1,4 @@
-import { INSERT_CONTENT, LOAD_CONTENT, REMOVE_CONTENT, UPDATE_CONTENT } from "./actionTypes";
+import { INSERT_CONTENT, LOAD_CONTENT, REMOVE_CONTENT, UNDO_CHANGES, UPDATE_CONTENT } from "./actionTypes";
 
 
 export const insertContentAction = (text: string, index: number, syncWithServer = false) => ({
@@ -9,6 +9,10 @@ export const insertContentAction = (text: string, index: number, syncWithServer 
 export const updateContentAction = (content: string) => ({
     type: UPDATE_CONTENT,
     content
+});
+
+export const undoContentAction = () => ({
+    type: UNDO_CHANGES
 });
 
 export const loadTextAction = (text: string, index: number) => ({

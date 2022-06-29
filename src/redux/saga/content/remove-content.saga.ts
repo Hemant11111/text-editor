@@ -1,7 +1,7 @@
 import { put, select, takeLatest, } from 'redux-saga/effects';
 import { REMOVE_CONTENT } from '../../actions/actionTypes';
 import { getContent } from "../../selectors/content.selector";
-import { updateContentAction } from "../../actions/content";
+import { updateContentAction } from "../../actions/content.action";
 import { removeChangesAction } from "../../actions/websocket";
 
 

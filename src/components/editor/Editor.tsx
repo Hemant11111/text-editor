@@ -1,5 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { insertContentAction, removeContentAction, updateContentAction } from "../../redux/actions/content";
+import {
+    insertContentAction,
+    removeContentAction,
+    undoContentAction,
+    updateContentAction
+} from "../../redux/actions/content.action";
 import { useDispatch, useSelector } from "react-redux";
 import { getContent } from "../../redux/selectors/content.selector";
 import { WebSocketService } from "../../service/network/webSocketService";
@@ -19,6 +24,7 @@ export default function Editor() {
 
         apiService.onmessage = function (event: MessageEvent) {
             try {
+                console.log(event.data);
                 const incomingChanges = JSON.parse(event.data);
                 const cursorPosition = getCurrentCursorPosition();
 
@@ -88,7 +94,11 @@ export default function Editor() {
         // @ts-ignore
         const {selectionStart: start, selectionEnd: end} = event.target;
 
-        // console.log(event, start, end);
+        console.log(event, start, end);
+
+        if (event.key === "z" && event.metaKey) {
+            dispatch(undoContentAction())
+        }
 
         if (end === start) {
             return;
