@@ -21,6 +21,7 @@ const contentReducer = (state = INITIAL_STATE, action: any) => {
             }
             return {...state, content: action.content, previousContents};
         case UNDO_CHANGES:
+            // TODO: create saga and sync undo changes as well.
             let prevChange = content;
             if (previousContents.length) {
                 prevChange = previousContents.pop() ?? "";
