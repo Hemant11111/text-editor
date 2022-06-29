@@ -29,18 +29,30 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Architecture
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+The app architecture has been divided into components, redux, service and store. 
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- components dir contains all react component. (No service/store logic)
+- redux dir contains all tools, actions, reducers and saga to support app.
+- service dir contains all service logic. 
+- store contains store setup file. 
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Components are dispatching actions and all logic are integrated into saga and services.
+Components are using memoized selectors to fetch data from store
+
+
+##How conflicts are resolved
+At first, I used yjs library with y-websocket to integrate text sync. 
+But this setup was causing a lot of issues/conflicts.
+To build a good text editor we need to have more control over code so, I started to insert and remove data based on cursor position.
+(there must be already solved solutions to this. there could be libraries as well doing the same; I integrated some solutions from web but they all were in bad shape as per our requirement)
+
+
+
+##Further exploration
+- I would like to explore more about it. As of now I am handing to much manually to support cursor position, paste operation, select and delete operation and undo operation, for which I think there should be better ways to do so (which I will definitely look into);
