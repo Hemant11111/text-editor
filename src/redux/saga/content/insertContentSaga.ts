@@ -2,7 +2,7 @@ import { put, select, takeLatest, } from 'redux-saga/effects';
 import { INSERT_CONTENT } from '../../actions/actionTypes';
 import { getContent } from "../../selectors/content.selector";
 import { updateContentAction } from "../../actions/content";
-import { emitInsertChangesAction } from "../../actions/websocket";
+import { postChangesAction } from "../../actions/websocket";
 
 
 export function* insertContentSaga(action: { index: number, text: string, syncWithServer: boolean, type: string }) {
@@ -19,7 +19,7 @@ export function* insertContentSaga(action: { index: number, text: string, syncWi
 
     if (syncWithServer) {
         // Sending changes to server
-        yield put(emitInsertChangesAction(index, text));
+        yield put(postChangesAction(index, text, content));
     }
 }
 

@@ -2,7 +2,7 @@ import { put, select, takeLatest, } from 'redux-saga/effects';
 import { REMOVE_CONTENT } from '../../actions/actionTypes';
 import { getContent } from "../../selectors/content.selector";
 import { updateContentAction } from "../../actions/content";
-import { emitRemoveChangesAction } from "../../actions/websocket";
+import { removeChangesAction } from "../../actions/websocket";
 
 
 export function* removeContentSaga(action: { start: number, length: number, type: string, syncWithServer: boolean, }) {
@@ -18,7 +18,7 @@ export function* removeContentSaga(action: { start: number, length: number, type
 
     if (syncWithServer) {
         // Sending changes to server
-        yield put(emitRemoveChangesAction(start, length));
+        yield put(removeChangesAction(start, length, content));
     }
 
 }

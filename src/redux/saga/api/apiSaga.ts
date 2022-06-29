@@ -3,32 +3,47 @@ import { POST_CHANGES_SAGA, REMOVE_CHANGES_SAGA } from "../../actions/actionType
 import { WebSocketService } from "../../../service/network/webSocketService";
 
 
-export function* postChangesSaga(action: { type: string, index: number, content: string }) {
+export function* postChangesSaga(action: { type: string, index: number, content: string, changes: string }) {
 
-    const {index, content} = action;
+    const {index, content, changes} = action;
 
     const apiService = WebSocketService.getInstance();
 
     if (apiService.isConnected) {
+        console.log("apiService", {
+            type: "INSERT",
+            index,
+            content,
+            changes
+        })
         apiService.send(JSON.stringify({
             type: "INSERT",
             index,
-            content
+            content,
+            changes
         }));
+    } else {
+        console.log("********* Websocket not connected!!!***********");
     }
 }
 
-export function* removeChangesSaga(action: { type: string, start: number, length: number }) {
+export function* removeChangesSaga(action: { type: string, start: number, length: number, content: string }) {
 
-    const {start, length} = action;
+    const {start, length, content} = action;
 
     const apiService = WebSocketService.getInstance();
 
     if (apiService.isConnected) {
+        console.log("apiService", {
+            type: "REMOVE",
+            start, length, content
+        })
         apiService.send(JSON.stringify({
             type: "REMOVE",
-            start, length
+            start, length, content
         }));
+    } else {
+        console.log("********* Websocket not connected!!!***********");
     }
 }
 

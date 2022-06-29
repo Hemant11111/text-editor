@@ -18,6 +18,7 @@ export class WebSocketService extends WebSocket {
 
         this.onclose = (event) => {
             console.log("Websocket connection closed", event);
+            WebSocketService.instance = new WebSocketService();
         };
     }
 
